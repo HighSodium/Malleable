@@ -1,46 +1,66 @@
-import arcade as arc
-from Utilities import WinSizer
-from Levels import LevelHandler as LH
+import arcade
+#from Modules.BaseLevel import Level
+from Utilities.WindowManager import WindowManager
+from Utilities.LevelManager import LevelManager
+from Utilities.InputManager import InputManager
 
-SCR_WDTH = 1000
-SCR_HGHT = 500
-SCR_TITL = "SnaKee"
-#TODO: Idea change: We're using the literal window to shake around a ball/object
 
-class SnaKee(arc.Window):
-    Manager = LH.LevelHandler()
+#TODO: Idea: We're using the literal window to shake around a ball/object
 
-    def __init__(self, sWidth, sHeight, title, resize):
-        super().__init__(sWidth, sHeight, title, resizable=resize)
-        arc.Window.set_maximum_size(self, 1500, 750)
-        arc.Window.set_minimum_size(self, 200, 200)
-        arc.set_background_color(arc.csscolor.MAROON)
 
+class SnaKee(arcade.Window):
+    currentLevelNumber = 0
+    windowManager: WindowManager
+    #currentLevel: Level
+
+    def __init__(self, resize):
+        super().__init__(resizable=resize)
+        self.windowManager = WindowManager(self)
+        self.levelManager = LevelManager(self)
+        self.inputManager = InputManager(self)
+        print(SnaKee.currentLevelNumber)
 
 
     def setup(self):
         """ USE THIS TO RESTART THE GAME """
-        Manager.LoadLevelSpecific(Levels.Level0)
+        self.levelManager.LoadLevelByNumber(self.currentLevelNumber)
 
+        #self.physicsEngine = arcade.PhysicsEngineSimple()
 
     def on_resize(self, width, height):
-        super().on_resize(width, height)
-        # size = arc.Window.get_size(self)
-        WinSizer.UpdateSize(width, height)
-        arc.Window.set_caption(self, f"Window size: {WinSizer.currWinSizeX} x {WinSizer.currWinSizeY}")
+        #super().on_resize(width, height)
+        self.windowManager.UpdateSize(width, height)
+        self.levelManager.currentLevel.ResizeLevel(width, height)
 
 
     def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        super().on_mouse_release(x, y, button, modifiers)
+        #super().on_mouse_release(x, y, button, modifiers)
+        #currentLevelNumber += 1
+        #self.setup()
+        pass
+
+    # def on_key_press(self, symbol: int, modifiers: int):
+    #     if playerController is not None:
+    #         pass
 
 
     def on_draw(self):
         self.clear()
+        self.levelManager.currentLevel.DrawLevel()
         # vvvv CODE TO DRAW GOES HERE vvvv
 
+    def on_update(self, delta_time: float):
+        self.levelManager.currentLevel.LevelFunctionality()
+
+
+
+
+#------------------------------------------------------------------
+##### THIS IS THE GAME ######
 def main():
 
-    game = SnaKee(SCR_WDTH, SCR_HGHT, SCR_TITL, True)
+    # TODO (LOW): Get rid of the resizeable setup and make # it part of the level somehow
+    game = SnaKee(True)
     game.setup()
     game.run()
 

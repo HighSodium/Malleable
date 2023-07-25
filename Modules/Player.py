@@ -1,4 +1,4 @@
-from SnaKee import arc
+import arcade as arc
 
 class Player(object):
     positionX = 10
@@ -14,7 +14,8 @@ class Player(object):
     
 
     def set_position(self, x, y):
-        self.playerSprite.center
+        #self.playerSprite.center
+        pass
 
 
 
